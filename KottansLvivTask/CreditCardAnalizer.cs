@@ -76,6 +76,10 @@ namespace KottansLvivTask
                 throw new FormatException("Credit card number has an incorrect format!");
             }
             creditCardNumber = RemoveAllWhitespaces(creditCardNumber);
+            if(GetCreditCardVendor(creditCardNumber) == "Unknown" && creditCardNumber.Length != 16)
+            {
+                throw new FormatException("Credit card number has an incorrect format!");
+            }
 
             try
             {
