@@ -17,6 +17,7 @@ namespace KottansLvivTask
                 @"\d{12,19}$",
                 @"^\d{4}\s\d{4}\s\d{4}$",
                 @"^\d{4}\s\d{5}\s\d{4}$",
+                @"^(?:\d{4}\s){3}\d{3}",
                 @"^\d{4}\s\d{6}\s\d{5}$",
                 @"^\d{4}(?:\s\d{4}){3}$"
             };
@@ -96,7 +97,7 @@ namespace KottansLvivTask
             {
                 return false;
             }
-            if(sum != 0)
+            if (sum != 0)
             {
                 return sum % 10 == 0;
             }
@@ -111,8 +112,9 @@ namespace KottansLvivTask
             }
 
             sourceCardNumber = RemoveAllWhitespaces(sourceCardNumber);
+            string sourceVendor = GetCreditCardVendor(sourceCardNumber);
 
-            if(!IsCreditCardNumberValid(sourceCardNumber))
+            if (!IsCreditCardNumberValid(sourceCardNumber))
             {
                 throw new ArgumentException("Input credit card number is not valid!");
             }
@@ -122,10 +124,10 @@ namespace KottansLvivTask
 
             for (int i = 0; i < 30; i++)
             {
-                if (IsCreditCardNumberValid((++resultCardNumber).ToString()))
+                if (IsCreditCardNumberValid((++resultCardNumber).ToString()) && GetCreditCardVendor((++resultCardNumber).ToString()) == sourceVendor)
                     return resultCardNumber.ToString();
             }
-            throw new Exception("Next card number not found!");
+            throw new Exception("Next card number is not found!");
         }
     }
 }
