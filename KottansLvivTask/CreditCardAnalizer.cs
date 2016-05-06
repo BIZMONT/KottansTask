@@ -47,12 +47,30 @@ namespace KottansLvivTask
         {
             return creditCardNumber.Replace(" ", string.Empty);
         }
+        private static string GetVendorWithoutCheck(string creditCardNumber)
+        {
+            string vendorName = "Unknown";
+            foreach (var vendor in vendors)
+            {
+                if (Regex.IsMatch(creditCardNumber, vendor.Key))
+                {
+                    vendorName = vendor.Value;
+                }
+            }
+            return vendorName;
+        }
 
         public static string GetCreditCardVendor(string creditCardNumber)
         {
+            string result = "Unknown";
+
             if (!IsFormatCorrect(creditCardNumber))
             {
                 throw new FormatException("Credit card number has an incorrect format!");
+            }
+            if(!IsCreditCardNumberValid(creditCardNumber))
+            {
+                throw new ArgumentException("Input credit card number is not valid!");
             }
             creditCardNumber = RemoveAllWhitespaces(creditCardNumber);
 
@@ -60,11 +78,11 @@ namespace KottansLvivTask
             {
                 if (Regex.IsMatch(creditCardNumber, vendor.Key))
                 {
-                    return vendor.Value;
+                    result = vendor.Value;
                 }
             }
 
-            return "Unknown";
+            return result;
         }
 
         public static bool IsCreditCardNumberValid(string creditCardNumber)
@@ -76,9 +94,10 @@ namespace KottansLvivTask
                 throw new FormatException("Credit card number has an incorrect format!");
             }
             creditCardNumber = RemoveAllWhitespaces(creditCardNumber);
-            if(GetCreditCardVendor(creditCardNumber) == "Unknown" && creditCardNumber.Length != 16)
+
+            if (GetVendorWithoutCheck(creditCardNumber) == "Unknown" && creditCardNumber.Length != 16)
             {
-                throw new FormatException("Credit card number has an incorrect format!");
+                return false;
             }
 
             try
@@ -128,7 +147,8 @@ namespace KottansLvivTask
 
             for (int i = 0; i < 30; i++)
             {
-                if (IsCreditCardNumberValid((++resultCardNumber).ToString()) && GetCreditCardVendor((++resultCardNumber).ToString()) == sourceVendor)
+                ++resultCardNumber;
+                if (IsCreditCardNumberValid(resultCardNumber.ToString()) && GetCreditCardVendor((resultCardNumber).ToString()) == sourceVendor)
                     return resultCardNumber.ToString();
             }
             throw new Exception("Next card number is not found!");
